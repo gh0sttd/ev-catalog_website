@@ -51,13 +51,17 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
 @login_required # Дозволяємо тільки залогіненим
 def toggle_favorite(request, pk):
+    # 1. Якщо юзер не залогінився — відправляємо його на логін
+    if not request.user.is_authenticated:
+        return redirect('login') 
+
     car = get_object_or_404(Car, pk=pk)
-    fav, created = Favorite.objects.get_or_create(user=request.user, car=car)
+    favorite, created = Favorite.objects.get_or_create(user=request.user, car=car)
     
     if not created:
-        fav.delete() # Якщо вже було в обраному — видаляємо (дизлайк)
-    
-    return redirect(request.META.get('HTTP_REFERER', 'catalog'))
+        favorite.delete()
+        
+    return redirect('catalog')
 
 @login_required
 def profile_view(request):
