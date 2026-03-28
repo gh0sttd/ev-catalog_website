@@ -28,15 +28,20 @@ class CarViewSet(viewsets.ModelViewSet):
     search_fields = ['model', 'brand__name']
     ordering_fields = ['price', 'range_km', 'power_kw']
 
-    @action(detail=False, methods=['get'])
-    def compare(self, request):
-        ids = request.query_params.get('ids', '').split(',')
-        if not ids or ids == ['']:
-            return Response({"Передайте ID через кому, наприклад: ?ids=1,2"}, status=400)
+    @action(detail=True, methods=['get', 'post'])
+    def toggle_favorite(self, request, pk=None):
+        # 1. Перевірка на аноніма (для DRF)
+        if not request.user.is_authenticated:
+            # Якщо це звичайний запит через браузер, перенаправляємо
+            return redirect('login') 
         
-        cars = Car.objects.filter(id__in=ids)
-        serializer = CarSerializer(cars, many=True)
-        return Response(serializer.data)
+        car = self.get_object()
+        favorite, created = Favorite.objects.get_or_create(user=request.user, car=car)
+        
+        if not created:
+            favorite.delete()
+            
+        return redirect('catalog')
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
