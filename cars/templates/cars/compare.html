@@ -1,0 +1,45 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<h2 class="text-4xl font-black mb-12 text-center">Порівняння <span class="text-blue-500">моделей</span></h2>
+
+{% if cars|length < 2 %}
+    <div class="text-center p-20 glass rounded-3xl border border-dashed border-slate-600">
+        <p class="text-slate-400 mb-6 text-xl">Оберіть принаймні 2 автомобілі в каталозі для порівняння.</p>
+        <a href="{% url 'catalog' %}" class="text-blue-500 font-bold border-b border-blue-500 pb-1">Повернутись до каталогу</a>
+    </div>
+{% else %}
+    <div class="grid grid-cols-3 gap-0 glass border border-slate-700 rounded-3xl overflow-hidden shadow-2xl">
+        <!-- Колонка назв параметрів -->
+        <div class="p-8 border-r border-slate-700 space-y-12 text-slate-500 font-bold uppercase text-xs">
+            <div class="h-48"></div> <!-- Пропуск під фото -->
+            <p>Модель</p>
+            <p>Ціна</p>
+            <p>Запас ходу</p>
+            <p>Батарея</p>
+            <p>Потужність</p>
+            <p>0-100 км/год</p>
+        </div>
+
+        {% for car in cars %}
+        <div class="p-8 border-r border-slate-700 text-center space-y-12 last:border-0">
+            <div class="h-48 flex items-center justify-center">
+                {% if car.image %}
+                    <img src="{{ car.image.url }}" class="max-h-full rounded-xl">
+                {% endif %}
+            </div>
+            <p class="text-xl font-black text-blue-400">{{ car.brand.name }} {{ car.model }}</p>
+            <p class="text-xl font-bold">{{ car.price }} грн</p>
+            <p class="text-xl font-bold text-white">{{ car.range_km }} км</p>
+            <p class="text-xl font-bold text-white">{{ car.battery_capacity }} кВт·год</p>
+            <p class="text-xl font-bold text-white">{{ car.power_kw }} кВт</p>
+            <p class="text-xl font-bold text-white">{{ car.acceleration_0_100 }} с</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="mt-10 text-center">
+        <a href="{% url 'clear_compare' %}" class="text-red-500 text-sm hover:underline">Очистити список порівняння</a>
+    </div>
+{% endif %}
+{% endblock %}

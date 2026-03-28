@@ -1,0 +1,42 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12">
+    <div class="glass border border-slate-700 rounded-[40px] overflow-hidden flex shadow-2xl">
+        <!-- Ліва частина: Інфо про авто -->
+        <div class="w-2/5 bg-slate-900 p-10 flex flex-col justify-center border-r border-slate-800">
+            <p class="text-blue-500 font-black uppercase tracking-widest text-[10px] mb-2">Тест-драйв</p>
+            <h2 class="text-4xl font-black text-white mb-6 tracking-tighter">{{ car.brand.name }} <br><span class="text-blue-500">{{ car.model }}</span></h2>
+            {% if car.image %}
+                <img src="{{ car.image.url }}" class="rounded-2xl shadow-2xl mb-6">
+            {% endif %}
+            <p class="text-slate-500 text-xs italic">Залиште заявку, і наш менеджер зв'яжеться з вами протягом 15 хвилин.</p>
+        </div>
+
+        <!-- Права частина: Форма -->
+        <div class="w-3/5 p-12">
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Ваше ім'я</label>
+                    <input type="text" name="full_name" required placeholder="Андрій Шевченко" 
+                           class="w-full bg-slate-800/50 border border-slate-700 rounded-2xl p-4 text-white focus:outline-none focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Номер телефону</label>
+                    <input type="tel" name="phone" required placeholder="+380 00 000 00 00"
+                           class="w-full bg-slate-800/50 border border-slate-700 rounded-2xl p-4 text-white focus:outline-none focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Бажана дата</label>
+                    <input type="date" name="date" required 
+                           class="w-full bg-slate-800/50 border border-slate-700 rounded-2xl p-4 text-white focus:outline-none focus:border-blue-500 transition-all">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest py-5 rounded-2xl transition-all shadow-xl shadow-blue-500/20 active:scale-95">
+                    Надіслати заявку
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
