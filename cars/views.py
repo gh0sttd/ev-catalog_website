@@ -28,14 +28,14 @@ class CarViewSet(viewsets.ModelViewSet):
     search_fields = ['model', 'brand__name']
     ordering_fields = ['price', 'range_km', 'power_kw']
 
-    @action(detail=True, methods=['get', 'post'])
+    @action(detail=True, methods=['get', 'post'], permission_classes=[]) # Дозволяємо доступ усім
     def toggle_favorite(self, request, pk=None):
-        # 1. Перевірка на аноніма (для DRF)
-        if not request.user.is_authenticated:
-            # Якщо це звичайний запит через браузер, перенаправляємо
-            return redirect('login') 
-        
+        # 1. Перевірка: якщо юзер - анонім, відправляємо на логін
+        if not request.user or request.user.is_anonymous:
+            return redirect('login')
+
         car = self.get_object()
+        # 2. Шукаємо або створюємо лайк
         favorite, created = Favorite.objects.get_or_create(user=request.user, car=car)
         
         if not created:
