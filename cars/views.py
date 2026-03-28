@@ -29,18 +29,14 @@ class CarViewSet(viewsets.ModelViewSet):
     ordering_fields = ['price', 'range_km', 'power_kw']
 
 @action(detail=True, methods=['get', 'post'], permission_classes=[]) # Дозволяємо доступ усім
+@login_required(login_url='/login/') # Це примусово кине на логін, якщо юзер анонім
 def toggle_favorite(request, pk):
-    # 1. Перевірка: якщо юзер - анонім, відправляємо на логін
-    if not request.user or request.user.is_anonymous:
-            return redirect('login')
-
-    car = self.get_object()
-    # 2. Шукаємо або створюємо лайк
+    car = get_object_or_404(Car, pk=pk)
     favorite, created = Favorite.objects.get_or_create(user=request.user, car=car)
-        
+    
     if not created:
         favorite.delete()
-            
+        
     return redirect('catalog')
 
 
